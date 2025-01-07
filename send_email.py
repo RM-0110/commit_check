@@ -19,6 +19,7 @@ from email.mime.multipart import MIMEMultipart
 
 username = "riddhimann" # add your jenkins username
 password = os.getenv('JENKINS_PASSWORD')
+print(password)
 
 def get_branch(repo, url, jsonurl, username, password):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
