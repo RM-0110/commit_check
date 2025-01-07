@@ -1,9 +1,9 @@
 import subprocess
 import sys
 
-# Function to install required packages from requirements.txt
+# Function to install required packages from packages.txt
 def install_requirements():
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "packages.txt"])
 
 # Install the packages from requirements.txt
 install_requirements()
