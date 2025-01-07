@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 
 # Function to install required packages from packages.txt
 def install_requirements():
@@ -17,7 +18,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 username = "riddhimann" # add your jenkins username
-password = "!17YiQ%Rv1GT3NhQ" # add you jenkins password
+password = os.getenv('JENKINS_PASSWORD')
 
 def get_branch(repo, url, jsonurl, username, password):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
@@ -206,7 +207,7 @@ for index, value in enumerate(commit_list_preprod):
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
 receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in"]  # Replace with your email
-password = "wlzy gohu rxzl bqap"  # Use an App Password if using Gmail
+password = os.getenv('APP_PASSWORD')
 
 subject = "Daily Commit List - Preprod - " + str(formatted_time)
 
