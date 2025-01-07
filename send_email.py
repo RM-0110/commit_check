@@ -1,3 +1,21 @@
+import subprocess
+import sys
+
+# Function to install packages if they are missing
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# List of required packages
+required_packages = ['requests', 'pandas']
+
+# Check and install missing packages
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        print(f"{package} not found, installing...")
+        install(package)
+
 import requests
 from requests.auth import HTTPBasicAuth
 import re
