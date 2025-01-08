@@ -83,8 +83,6 @@ def get_commit(repo, url, username, password):
   else:
     print("Failed to retrieve the page."+str(response.status_code))
 
-# mapping = {"cancerbaba":{"job_name_dev":"cancerbaba/job/2.0/job/deploy-dev","job_name_preprod":"cancerbaba/job/2.0/job/deploy-preprod"},"experts":{"job_name_dev":"experts/job/docker/job/deploy-dev","job_name_preprod":"experts/job/docker/job/deploy-preprod"},"core":{"job_name_dev":"vyas/job/core/job/deploy-dev","job_name_preprod":"vyas/job/core/job/deploy-preprod"},"UI":{"job_name_dev":"vyas/job/ui/job/deploy-dev","job_name_preprod":"vyas/job/ui/job/deploy-preprod"},"user_management":{"job_name_dev":"user-management/job/deploy-dev","job_name_preprod":"user-management/job/deploy-preprod"},"patient_reports":{"job_name_dev":"vyas/job/patient-reports/job/deploy-dev","job_name_preprod":"vyas/job/patient-reports/job/deploy-preprod"},"refresh_articles":{"job_name_dev":"vyas/job/refresh-articles/job/deploy-dev","job_name_preprod":"vyas/job/refresh-articles/job/deploy-preprod"},"process":{"job_name_dev":"process/job/docker/job/deploy-dev","job_name_preprod":"process/job/docker/job/deploy-preprod"},"nes":{"job_name_dev":"nes/job/deploy-dev","job_name_preprod":"nes/job/deploy-preprod"},"www":{"job_name_dev":"www/job/3.0/job/deploy-dev","job_name_preprod":"www/job/3.0/job/deploy-preprod"},"napi":{"job_name_dev":"navyaapi/job/4.0/job/deploy-dev","job_name_preprod":"navyaapi/job/4.0/job/deploy-preprod"},"ui_user_management":{"job_name_dev":"vyas/job/ui-user-management/job/deploy-dev","job_name_preprod":"vyas/job/ui-user-management/job/deploy-preprod"}}
-
 mapping = {
   "cancerbaba": {
     "job_name_dev": "cancerbaba/job/2.0/job/deploy-dev",
@@ -168,22 +166,6 @@ def main_preprod(username, password, mapping):
     print("---------------------")
   return commit_list
 
-# def main_prod(username, password, mapping):
-#   commit_list = []
-#   repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts"]
-#   for index,repo in enumerate(repolist):
-#     repo_job = mapping[repo]["job_name_prod"]
-#     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
-#     jsonurl = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/api/json"
-#     print("Checking for: "+repo)
-#     branch = get_branch(repo, url, jsonurl, username, password)
-#     get_user(url, username, password)
-#     commitid = get_commit(repo, url, username, password)
-#     commit_string = f"{repo}: {branch}, Commit ID: {commitid}"
-#     commit_list.append(commit_string)
-#     print("---------------------")
-#   return commit_list
-
 commit_list_preprod = main_preprod(username, password, mapping)
 
 print(commit_list_preprod)
@@ -221,12 +203,3 @@ try:
     print("Email sent successfully.")
 except Exception as e:
     print("Error:", str(e))
-
-# commit_list_prod = main_prod(username, password, mapping)
-
-# import pandas as pd
-# time_ist = pd.Timestamp.now('Asia/Kolkata')
-# formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
-# print("List of preprod branches and commit IDs, generated on "+str(formatted_time)+"\n")
-# for index, value in enumerate(commit_list_prod):
-#   print(str(index+1)+". "+value)
