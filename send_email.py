@@ -1,14 +1,6 @@
 import subprocess
 import sys
 import os
-
-# Function to install required packages from packages.txt
-def install_requirements():
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "packages.txt"])
-
-# Install the packages from requirements.txt
-install_requirements()
-
 import requests
 from requests.auth import HTTPBasicAuth
 import re
