@@ -1,5 +1,3 @@
-import subprocess
-import sys
 import os
 import requests
 from requests.auth import HTTPBasicAuth
