@@ -1,7 +1,6 @@
 name: Send Email
 
 on:
-  schedule:
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
