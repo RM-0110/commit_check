@@ -2,8 +2,6 @@ name: Send Email
 
 on:
   schedule:
-    - cron: '10 2 * * *'   # Triggers at 2:10 AM UTC (7:40 AM IST).
-    - cron: '10 14 * * *'  # Triggers at 2:10 PM UTC (7:40 PM IST).
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
