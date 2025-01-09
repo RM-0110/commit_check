@@ -179,7 +179,7 @@ for index, value in enumerate(commit_list_preprod):
     email_body += str(index + 1) + ". " + value + "\n"
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
-receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in"]  # Replace with your email
+receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
 password = os.getenv('APP_PASSWORD')
 
 subject = "Daily Commit List - Preprod - " + str(formatted_time)
