@@ -81,6 +81,19 @@ def get_commit(repo, url, username, password):
   else:
     print("Failed to retrieve the page."+str(response.status_code))
 
+def get_build_number(repo, url, username, password):
+  response = requests.get(url, auth=HTTPBasicAuth(username, password))
+  if response.status_code == 200:
+    page_text = response.text
+    pattern = r'Started by upstream project ".*?/deploy-dev" build number (\d+)'
+    match = re.search(pattern, page_text)
+    if match:
+      build_number = match.group(1)
+      print(f"{repo} build number: ", build_number)
+      return build_number
+    else:
+      print("no match")
+
 mapping = {
   "cancerbaba": {
     "job_name_dev": "cancerbaba/job/2.0/job/deploy-dev",
@@ -159,7 +172,8 @@ def main_preprod(username, password, mapping):
       branch = branch
     get_user(url, username, password)
     commitid = get_commit(repo, url, username, password)
-    commit_string = f"{repo}: {branch}, Commit ID: {commitid}"
+    build_number = get_build_number(repo, url, username, password)
+    commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build_number: {build_number}"
     commit_list.append(commit_string)
     print("---------------------")
   return commit_list
@@ -178,8 +192,11 @@ email_body = "List of preprod branches and commit IDs, generated on " + str(form
 for index, value in enumerate(commit_list_preprod):
     email_body += str(index + 1) + ". " + value + "\n"
 
+email_body += "\n\n\n"
+email_body += "Build numbers having 'none' value indicates that the latest preprod deployment does not have any upstream project linked to it."
+
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
-receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
+receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in"]  # Replace with your email
 password = os.getenv('APP_PASSWORD')
 
 subject = "Daily Commit List - Preprod - " + str(formatted_time)
