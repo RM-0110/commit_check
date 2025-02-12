@@ -25,8 +25,14 @@ def get_branch(repo, url, jsonurl, username, password):
     if branch_name:
       print(f'Branch Name: {branch_name}')
       return branch_name
-    else:
+    elif not branch_name:
       print('GIT_BRANCH_NAME not found in the build parameters.')
+      page_text = response.text
+      branch = r'Cloning branch - (\w+)'
+      match_branch = re.search(branch, page_text)
+      return match_branch
+    else:
+      print('GIT_BRANCH_NAME not found in the build parameters or page source')
       return None
   else:
     print("Failed to retrieve the page: "+url+str(response.status_code))
@@ -154,12 +160,17 @@ mapping = {
     "job_name_dev": "vyas/job/ui-user-management/job/deploy-dev",
     "job_name_preprod": "vyas/job/ui-user-management/job/deploy-preprod",
     "job_name_prod": "vyas/job/ui-user-management/job/deploy-pri-prod"
-  }
+  },
+  "sendemail": {
+    "job_name_dev": "utilities/job/sendemail/job/deploy-dev",
+    "job_name_preprod": "utilities/job/sendemail/job/deploy-preprod",
+    "job_name_prod": "utilities/job/sendemail/job/deploy-pri-prod"
+}
 }
 
 def main_preprod(username, password, mapping):
   commit_list = []
-  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts"]
+  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendemail]
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_preprod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
