@@ -11,10 +11,11 @@ username = "riddhimann" # add your jenkins username
 password = os.getenv('JENKINS_PASSWORD')
 print(password)
 
-def get_branch(repo, url, jsonurl, username, password):
+def get_branch(repo, url, jsonurl, username, password, branch_name = None):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
   if response.status_code == 200:
     build_info = response.json()
+    page_text = response.text
     actions = build_info.get('actions', [])
     for action in actions:
       if 'parameters' in action:
@@ -25,12 +26,18 @@ def get_branch(repo, url, jsonurl, username, password):
     if branch_name:
       print(f'Branch Name: {branch_name}')
       return branch_name
+
     elif not branch_name:
-      print('GIT_BRANCH_NAME not found in the build parameters.')
-      page_text = response.text
-      branch = r'Cloning branch - (\w+)'
-      match_branch = re.search(branch, page_text)
-      return match_branch
+      response2 = requests.get(url, auth=HTTPBasicAuth(username, password))
+      page_text = response2.text
+      branch_pattern = r'Cloning branch - (\w+)'
+      match = re.search(branch_pattern, page_text)
+      if match:
+        branch_name = match.group(1)  # Extract matched text
+        print(branch_name)  # Output: master
+        return branch_name
+      else:
+        print("Branch name not found.")
     else:
       print('GIT_BRANCH_NAME not found in the build parameters or page source')
       return None
@@ -161,7 +168,7 @@ mapping = {
     "job_name_preprod": "vyas/job/ui-user-management/job/deploy-preprod",
     "job_name_prod": "vyas/job/ui-user-management/job/deploy-pri-prod"
   },
-  "sendemail": {
+  "sendmail": {
     "job_name_dev": "utilities/job/sendemail/job/deploy-dev",
     "job_name_preprod": "utilities/job/sendemail/job/deploy-preprod",
     "job_name_prod": "utilities/job/sendemail/job/deploy-pri-prod"
@@ -170,7 +177,7 @@ mapping = {
 
 def main_preprod(username, password, mapping):
   commit_list = []
-  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendemail"]
+  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail"]
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_preprod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
