@@ -213,7 +213,7 @@ email_body += "\n\n\n"
 email_body += "Build numbers having 'none' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
-receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in"]  # Replace with your email
+receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
 password = os.getenv('APP_PASSWORD')
 
 subject = "Daily Commit List - Preprod - " + str(formatted_time)
