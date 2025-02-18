@@ -176,7 +176,7 @@ mapping = {
 
 def main_preprod(username, password, mapping):
   commit_list = []
-  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail"]
+  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst"]
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_preprod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
@@ -213,7 +213,7 @@ email_body += "\n\n\n"
 email_body += "Build numbers having 'none' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
-receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
+receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in"]  # Replace with your email
 password = os.getenv('APP_PASSWORD')
 
 subject = "Daily Commit List - Preprod - " + str(formatted_time)
