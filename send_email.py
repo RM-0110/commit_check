@@ -59,40 +59,34 @@ def get_user(url, username, password):
     print("Failed to retrieve the page: "+url+str(response.status_code))
 
 def get_commit(repo, url, username, password):
-  response = requests.get(url, auth=HTTPBasicAuth(username, password))
-  if response.status_code == 200:
-    page_text = response.text
-    commit = r'COMMIT_ID_IN_TAG = (\w+)'
-    match_commit = re.search(commit, page_text)
-    if match_commit:
-        um = match_commit.group(1)
-        print(f"{repo} commit id: ", um)
-        return um
-    else:
-        commit_id = r'Commit id - (\w+)'
-        match_commit = re.search(commit_id, page_text)
-        if match_commit:
-          um = match_commit.group(1)
-          print(f"{repo} commit id: ", um)
-          return um
-        else:
-          commit_id = r'last commit for alpha apps:(\w+)'
-          match_commit = re.search(commit_id, page_text)
-          if match_commit:
-            um = match_commit.group(1)
-            print(f"{repo} commit id: ", um)
-            return um
-          else:
-            commit_id = r'last commit:(\w+)'
-            match_commit = re.search(commit_id, page_text)
+    try:
+        response = requests.get(url, auth=HTTPBasicAuth(username, password))
+        if response.status_code != 200:
+            print(f"Failed to retrieve the page. Status Code: {response.status_code}")
+            return None
+
+        page_text = response.text
+        commit_patterns = [
+            r'COMMIT_ID_IN_TAG = (\w+)',
+            r'Commit id - (\w+)',
+            r'last commit for alpha apps:(\w+)',
+            r'last commit:(\w+)',
+            r'ANALYST_APP_COMMIT_ID = (\w+)'
+        ]
+
+        for pattern in commit_patterns:
+            match_commit = re.search(pattern, page_text)
             if match_commit:
-              um = match_commit.group(1)
-              print(f"{repo} commit id: ", um)
-              return um
-            else:
-              print("commit id not found")
-  else:
-    print("Failed to retrieve the page."+str(response.status_code))
+                commit_id = match_commit.group(1)
+                print(f"{repo} commit id: {commit_id}")
+                return commit_id
+
+        print("Commit ID not found")
+        return None
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 def get_build_number(repo, url, username, password):
   response = requests.get(url, auth=HTTPBasicAuth(username, password))
@@ -172,6 +166,11 @@ mapping = {
     "job_name_dev": "utilities/job/sendemail/job/deploy-dev",
     "job_name_preprod": "utilities/job/sendemail/job/deploy-preprod",
     "job_name_prod": "utilities/job/sendemail/job/deploy-pri-prod"
+},
+  "analyst": {
+    "job_name_dev": "vyas/job/analyst/job/deploy-dev",
+    "job_name_preprod": "vyas/job/analyst/job/deploy-preprod",
+    "job_name_prod": "vyas/job/analyst/job/deploy-pri-prod"
 }
 }
 
