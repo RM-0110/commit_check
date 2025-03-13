@@ -196,8 +196,32 @@ def main_preprod(username, password, mapping):
   return commit_list
 
 commit_list_preprod = main_preprod(username, password, mapping)
-
 print(commit_list_preprod)
+
+def main_prod(username, password, mapping):
+  commit_list = []
+  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst"]
+
+  for index,repo in enumerate(repolist):
+    repo_job = mapping[repo]["job_name_prod"]
+    url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
+    jsonurl = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/api/json"
+    print("Checking for: "+repo)
+    branch = get_branch(repo, url, jsonurl, username, password)
+    if branch == None:
+      branch = "develop"
+    else:
+      branch = branch
+    get_user(url, username, password)
+    commitid = get_commit(repo, url, username, password)
+    build_number = get_build_number(repo, url, username, password)
+    commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build_number: {build_number}"
+    commit_list.append(commit_string)
+    print("---------------------")
+  return commit_list
+
+commit_list_prod = main_prod(username, password, mapping)
+print(commit_list_prod)
 
 time_ist = pd.Timestamp.now('Asia/Kolkata')
 formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
@@ -205,18 +229,30 @@ print("List of preprod branches and commit IDs, generated on "+str(formatted_tim
 for index, value in enumerate(commit_list_preprod):
   print(str(index+1)+". "+value)
 
+time_ist = pd.Timestamp.now('Asia/Kolkata')
+formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
+print("List of prod branches and commit IDs, generated on "+str(formatted_time)+"\n")
+for index, value in enumerate(commit_list_prod):
+  print(str(index+1)+". "+value)
+
+#-----------------------------------------------
+
 email_body = "List of preprod branches and commit IDs, generated on " + str(formatted_time) + "\n\n"
 for index, value in enumerate(commit_list_preprod):
+    email_body += str(index + 1) + ". " + value + "\n"
+
+email_body = "List of prod branches and commit IDs, generated on " + str(formatted_time) + "\n\n"
+for index, value in enumerate(commit_list_prod):
     email_body += str(index + 1) + ". " + value + "\n"
 
 email_body += "\n\n\n"
 email_body += "Build numbers having 'none' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
-receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
+receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in"]  # Replace with your email
 password = os.getenv('APP_PASSWORD')
 
-subject = "Daily Commit List - Preprod - " + str(formatted_time)
+subject = "Daily Commit List - Preprod and Prod - " + str(formatted_time)
 
 # Create email
 message = MIMEMultipart()
