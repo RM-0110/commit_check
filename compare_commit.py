@@ -1,92 +1,94 @@
+import json
+import os
+from datetime import datetime, timedelta
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-import os
+from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import smtplib
 
-# Google Drive Authentication
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()  # Follow the URL in the console for authentication
-drive = GoogleDrive(gauth)
+def authenticate_drive():
+    client_secrets_data = json.loads(os.getenv("CLIENT_SECRET"))
+    with open("client_secrets_temp.json", "w") as f:
+        json.dump(client_secrets_data, f)
 
-# Folder ID where data will be stored in Google Drive
-drive_folder_id = '1fbL73bQ7zyf-D8p74ShCzuTD4oI_lC9f'
+    gauth = GoogleAuth()
+    scope = ["https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name("client_secrets_temp.json", scope)
+    gauth.credentials = creds
 
-# Save commit data to Drive
-def save_commit_data(commit_list, filename):
-    content = "\n".join(commit_list)
-    file_list = drive.ListFile({'q': f"'{drive_folder_id}' in parents and title = '{filename}'"}).GetList()
+    os.remove("client_secrets_temp.json")
+    return GoogleDrive(gauth)
 
-    if file_list:
-        file = file_list[0]  # Update the existing file
-        file.SetContentString(content)
-        file.Upload()
+def get_file_for_date(drive, target_date):
+    file_list = drive.ListFile({'q': "title contains 'commit_data_' and trashed=false"}).GetList()
+    for file in file_list:
+        if target_date in file['title']:
+            return file
+    return None
+
+drive = authenticate_drive()
+
+today = datetime.now().strftime('%Y-%m-%d')
+yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+
+# Get today's and yesterday's commit files
+today_file = get_file_for_date(drive, today)
+yesterday_file = get_file_for_date(drive, yesterday)
+
+if not today_file:
+    print("No commit data for today.")
+    exit()
+
+if not yesterday_file:
+    print("No commit data for yesterday. Treating all today's commits as new.")
+    today_file.GetContentFile(f"commit_data_{today}.txt")
+    exit()
+
+yesterday_file.GetContentFile(f"commit_data_{yesterday}.txt")
+today_file.GetContentFile(f"commit_data_{today}.txt")
+
+def compare_commits(today_file, yesterday_file):
+    with open(today_file, 'r') as t, open(yesterday_file, 'r') as y:
+        today_commits = set(t.readlines())
+        yesterday_commits = set(y.readlines())
+
+    new_commits = today_commits - yesterday_commits
+
+    email_body = "List of prod and preprod branches and commit IDs, generated on " + str(today) + "\n\n"
+
+    if new_commits:
+        email_body += "Newly changed commits since yesterday:\n"
+        for index, commit in enumerate(new_commits):
+            email_body += str(index + 1) + ". " + commit.strip() + "\n"
     else:
-        file = drive.CreateFile({'title': filename, 'parents': [{'id': drive_folder_id}]})
-        file.SetContentString(content)
-        file.Upload()
+        email_body += "No new commits found since yesterday.\n"
 
-# Retrieve commit data from Drive
-def fetch_commit_data(filename):
-    file_list = drive.ListFile({'q': f"'{drive_folder_id}' in parents and title = '{filename}'"}).GetList()
-    if file_list:
-        file = file_list[0]  # Found file
-        content = file.GetContentString()
-        return content.strip().split("\n")
-    return []
+    send_email(email_body)
 
-# Compare commit lists
-def compare_commits(today_commits, yesterday_commits):
-    return list(set(today_commits) - set(yesterday_commits))
+def send_email(email_body):
+    sender_email = "riddhimann@navyatech.in"
+    receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in"]
+    password = os.getenv('APP_PASSWORD')
 
-# Main Logic
-today_date = pd.Timestamp.now('Asia/Kolkata').strftime('%Y-%m-%d')
-yesterday_date = (pd.Timestamp.now('Asia/Kolkata') - pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+    subject = "Daily Commit List - Preprod and Prod - " + str(today)
 
-today_filename = f'commit_data_{today_date}.txt'
-yesterday_filename = f'commit_data_{yesterday_date}.txt'
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = ", ".join(receiver_emails)
+    message["Subject"] = subject
+    message.attach(MIMEText(email_body, "plain"))
 
-commit_list_preprod = main_preprod(username, password, mapping)
-commit_list_prod = main_prod(username, password, mapping)
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_emails, message.as_string())
+        server.quit()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Error:", str(e))
 
-save_commit_data(commit_list_preprod + commit_list_prod, today_filename)
-yesterday_commits = fetch_commit_data(yesterday_filename)
-
-changed_commits = compare_commits(commit_list_preprod + commit_list_prod, yesterday_commits)
-
-# Email content update
-email_body = "List of prod and preprod branches and commit IDs, generated on " + str(today_date) + "\n\n"
-for index, value in enumerate(commit_list_preprod):
-    email_body += str(index + 1) + ". " + value + "\n"
-
-diff_section = "\nNewly changed commits since yesterday:\n" if changed_commits else "\nNo new commits found since yesterday.\n"
-email_body += diff_section
-
-for index, value in enumerate(changed_commits):
-    email_body += str(index + 1) + ". " + value + "\n"
-
-email_body += "\n\nBuild numbers having 'none' value indicates that the latest preprod deployment does not have any upstream project linked to it."
-
-# Email sending logic remains the same
-sender_email = "riddhimann@navyatech.in"  # Replace with your email
-receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in"]  # Replace with your email
-password = os.getenv('APP_PASSWORD')
-
-subject = "Daily Commit List - Preprod and Prod - " + str(formatted_time)
-
-# Create email
-message = MIMEMultipart()
-message["From"] = sender_email
-message["To"] = ", ".join(receiver_emails)
-message["Subject"] = subject
-message.attach(MIMEText(email_body, "plain"))
-
-# Send email
-try:
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.starttls()
-    server.login(sender_email, password)
-    server.sendmail(sender_email, receiver_emails, message.as_string())
-    server.quit()
-    print("Email sent successfully.")
-except Exception as e:
-    print("Error:", str(e))
+compare_commits(f"commit_data_{today}.txt", f"commit_data_{yesterday}.txt")
