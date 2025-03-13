@@ -23,7 +23,7 @@ jobs:
 
       - name: Run send_email.py script
         run: |
-          python send_email.py
+          python compare_commit.py
         env:
           JENKINS_PASSWORD: ${{ secrets.JENKINS_PASSWORD }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
