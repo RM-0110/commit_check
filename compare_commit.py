@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 import smtplib
 
 def authenticate_drive():
-    client_secrets_data = json.loads(os.getenv("CLIENT_SECRET"))
+    client_secrets_data = json.loads(os.getenv("CLIENT_SECRETS"))
     with open("client_secrets_temp.json", "w") as f:
         json.dump(client_secrets_data, f)
 
