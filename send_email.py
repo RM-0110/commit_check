@@ -229,8 +229,6 @@ print("List of preprod branches and commit IDs, generated on "+str(formatted_tim
 for index, value in enumerate(commit_list_preprod):
   print(str(index+1)+". "+value)
 
-time_ist = pd.Timestamp.now('Asia/Kolkata')
-formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
 print("List of prod branches and commit IDs, generated on "+str(formatted_time)+"\n")
 for index, value in enumerate(commit_list_prod):
   print(str(index+1)+". "+value)
@@ -241,7 +239,7 @@ email_body = "List of preprod branches and commit IDs, generated on " + str(form
 for index, value in enumerate(commit_list_preprod):
     email_body += str(index + 1) + ". " + value + "\n"
 
-email_body = "List of prod branches and commit IDs, generated on " + str(formatted_time) + "\n\n"
+email_body += "\nList of prod branches and commit IDs, generated on " + str(formatted_time) + "\n\n"
 for index, value in enumerate(commit_list_prod):
     email_body += str(index + 1) + ". " + value + "\n"
 
