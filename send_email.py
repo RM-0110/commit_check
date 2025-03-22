@@ -244,7 +244,7 @@ for index, value in enumerate(commit_list_prod):
     email_body += str(index + 1) + ". " + value + "\n"
 
 email_body += "\n\n\n"
-email_body += "Build numbers having 'none' value indicates that the latest preprod deployment does not have any upstream project linked to it."
+email_body += "Build numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
 receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
