@@ -240,6 +240,7 @@ for index, value in enumerate(commit_list_preprod):
     email_body += str(index + 1) + ". " + value + "\n"
 
 email_body += "------------------------------"+"\n"
+email_body += "------------------------------"+"\n"
 
 email_body += "\nList of prod branches and commit IDs, generated on " + str(formatted_time) + "\n\n"
 for index, value in enumerate(commit_list_prod):
