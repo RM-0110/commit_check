@@ -53,6 +53,7 @@ def get_user(url, username, password):
     if match_user:
         um_user = match_user.group(1)
         print("Deployed by", um_user)
+        return um_user
     else:
         print("user not found while trying to send request to "+url)
   else:
@@ -206,7 +207,7 @@ def main_preprod(username, password, mapping):
     time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
     build_number = get_build_number(repo, url, username, password)
-    commit_string = f"{repo}: {branch}, {user}, {time}, Commit ID: {commitid}"
+    commit_string = f"{repo}: {branch}, {user}, {time}, Commit ID: {commitid}, build number: {build_number}"
     commit_list.append(commit_string)
     print("---------------------")
   return commit_list
@@ -233,7 +234,7 @@ def main_prod(username, password, mapping):
     time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
     build_number = get_build_number(repo, url, username, password)
-    commit_string = f"{repo}: {branch}, {user}, {time}, Commit ID: {commitid}"
+    commit_string = f"{repo}: {branch}, {user}, {time}, Commit ID: {commitid}, build number: {build_number}"
     commit_list.append(commit_string)
     print("---------------------")
   return commit_list
