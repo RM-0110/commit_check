@@ -58,6 +58,20 @@ def get_user(url, username, password):
   else:
     print("Failed to retrieve the page: "+url+str(response.status_code))
 
+def get_time(repo, url_last_succesful_build, username, password):
+  response = requests.get(url_last_succesful_build, auth=HTTPBasicAuth(username, password))
+  if response.status_code == 200:
+    page_text = response.text
+    match = re.search(r"Started\s+(.*)", page_text)
+    if match:
+        result = match.group(1)  # Extract everything after "Started"
+        cleaned_result = re.sub(r"</?div>", "", result)  # Remove <div> and </div>
+        result2 = cleaned_result.strip()
+        print(result2) 
+        return result2
+    else:
+      print("no match")
+
 def get_commit(repo, url, username, password):
     try:
         response = requests.get(url, auth=HTTPBasicAuth(username, password))
@@ -181,16 +195,18 @@ def main_preprod(username, password, mapping):
     repo_job = mapping[repo]["job_name_preprod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
     jsonurl = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/api/json"
+    url_last_succesful_build = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild"
     print("Checking for: "+repo)
     branch = get_branch(repo, url, jsonurl, username, password)
     if branch == None:
       branch = "develop"
     else:
       branch = branch
-    get_user(url, username, password)
+    user = get_user(url, username, password)
+    time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
     build_number = get_build_number(repo, url, username, password)
-    commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build_number: {build_number}"
+    commit_string = f"{repo}: {branch}, {user}, {time}, Commit ID: {commitid}"
     commit_list.append(commit_string)
     print("---------------------")
   return commit_list
@@ -206,16 +222,18 @@ def main_prod(username, password, mapping):
     repo_job = mapping[repo]["job_name_prod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
     jsonurl = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/api/json"
+    url_last_succesful_build = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild"
     print("Checking for: "+repo)
     branch = get_branch(repo, url, jsonurl, username, password)
     if branch == None:
       branch = "develop"
     else:
       branch = branch
-    get_user(url, username, password)
+    user = get_user(url, username, password)
+    time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
     build_number = get_build_number(repo, url, username, password)
-    commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build_number: {build_number}"
+    commit_string = f"{repo}: {branch}, {user}, {time}, Commit ID: {commitid}"
     commit_list.append(commit_string)
     print("---------------------")
   return commit_list
@@ -250,7 +268,7 @@ email_body += "\n\n\n"
 email_body += "Build numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
-receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
+receiver_emails = ["riddhimann@navyatech.in"]  # Replace with your email
 password = os.getenv('APP_PASSWORD')
 
 subject = "Daily Commit List - Preprod and Prod - " + str(formatted_time)
