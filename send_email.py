@@ -207,7 +207,7 @@ def main_preprod(username, password, mapping):
     time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
     build_number = get_build_number(repo, url, username, password)
-    commit_string = f"{repo}: {branch}, {time}, Commit ID: {commitid}, build number: {build_number}"
+    commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build number: {build_number}, {time}"
     commit_list.append(commit_string)
     print("---------------------")
   return commit_list
@@ -234,7 +234,7 @@ def main_prod(username, password, mapping):
     time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
     build_number = get_build_number(repo, url, username, password)
-    commit_string = f"{repo}: {branch}, {time}, Commit ID: {commitid}, build number: {build_number}"
+    commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build number: {build_number}, {time}"
     commit_list.append(commit_string)
     print("---------------------")
   return commit_list
@@ -244,24 +244,24 @@ print(commit_list_prod)
 
 time_ist = pd.Timestamp.now('Asia/Kolkata')
 formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
-print("List of preprod branches and commit IDs, generated on "+str(formatted_time)+"\n")
+print("List of preprod branches and commit IDs"+"\n")
 for index, value in enumerate(commit_list_preprod):
   print(str(index+1)+". "+value)
 
-print("List of prod branches and commit IDs, generated on "+str(formatted_time)+"\n")
+print("List of prod branches and commit IDs"+"\n")
 for index, value in enumerate(commit_list_prod):
   print(str(index+1)+". "+value)
 
 #-----------------------------------------------
 
-email_body = "List of preprod branches and commit IDs, generated on " + str(formatted_time) + "\n\n"
+email_body = "List of preprod branches and commit IDs"+"\n\n"
 for index, value in enumerate(commit_list_preprod):
     email_body += str(index + 1) + ". " + value + "\n"
 
 email_body += "------------------------------"+"\n"
 email_body += "------------------------------"+"\n"
 
-email_body += "\nList of prod branches and commit IDs, generated on " + str(formatted_time) + "\n\n"
+email_body += "\nList of prod branches and commit IDs"+"\n\n"
 for index, value in enumerate(commit_list_prod):
     email_body += str(index + 1) + ". " + value + "\n"
 
