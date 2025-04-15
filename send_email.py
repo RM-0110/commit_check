@@ -130,7 +130,7 @@ mapping = {
   "core": {
     "job_name_dev": "vyas/job/core/job/deploy-dev",
     "job_name_preprod": "vyas/job/core/job/deploy-preprod",
-    "job_name_prod": "experts/job/docker/job/deploy-pri-prod"
+    "job_name_prod": "vyas/job/core/job/deploy-pri-prod"
   },
   "UI": {
     "job_name_dev": "vyas/job/ui/job/deploy-dev",
