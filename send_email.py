@@ -11,6 +11,8 @@ username = "riddhimann" # add your jenkins username
 password = os.getenv('JENKINS_PASSWORD')
 print(password)
 
+repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst"]
+
 def get_branch(repo, url, jsonurl, username, password, branch_name = None):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
   if response.status_code == 200:
@@ -189,9 +191,9 @@ mapping = {
 }
 }
 
-def main_preprod(username, password, mapping):
+def main_preprod(repolist, username, password, mapping):
   commit_list = []
-  repolist = ["user management", "cancerbaba", "nes", "refresh articles", "core", "UI", "patient reports", "www", "ui-user-management", "napi", "process", "experts", "sendmail", "analyst"]
+  # repolist = ["user management", "cancerbaba", "nes", "refresh articles", "core", "UI", "patient reports", "www", "ui-user-management", "napi", "process", "experts", "sendmail", "analyst"]
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_preprod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
@@ -215,9 +217,9 @@ def main_preprod(username, password, mapping):
 commit_list_preprod = main_preprod(username, password, mapping)
 print(commit_list_preprod)
 
-def main_prod(username, password, mapping):
+def main_prod(repolist, username, password, mapping):
   commit_list = []
-  repolist = ["user management", "cancerbaba", "nes", "refresh articles", "core", "UI", "patient reports", "www", "ui-user-management", "napi", "process", "experts", "sendmail", "analyst"]
+  # repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst"]
 
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_prod"]
