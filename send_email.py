@@ -191,7 +191,7 @@ mapping = {
 
 def main_preprod(username, password, mapping):
   commit_list = []
-  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst"]
+  repolist = ["user management", "cancerbaba", "nes", "refresh articles", "core", "UI", "patient reports", "www", "ui-user-management", "napi", "process", "experts", "sendmail", "analyst"]
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_preprod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
@@ -217,7 +217,7 @@ print(commit_list_preprod)
 
 def main_prod(username, password, mapping):
   commit_list = []
-  repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst"]
+  repolist = ["user management", "cancerbaba", "nes", "refresh articles", "core", "UI", "patient reports", "www", "ui-user-management", "napi", "process", "experts", "sendmail", "analyst"]
 
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_prod"]
@@ -266,7 +266,7 @@ for index, value in enumerate(commit_list_prod):
     email_body += str(index + 1) + ". " + value + "\n"
 
 email_body += "\n\n\n"
-email_body += "Build numbers having 'none' value indicates that the latest preprod deployment does not have any upstream project linked to it."
+email_body += "Build numbers having 'none' value indicates that the latest deployment does not have any upstream project linked to it."
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
 receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
