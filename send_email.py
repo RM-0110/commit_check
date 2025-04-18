@@ -214,7 +214,7 @@ def main_preprod(repolist, username, password, mapping):
     print("---------------------")
   return commit_list
 
-commit_list_preprod = main_preprod(username, password, mapping)
+commit_list_preprod = main_preprod(repolist, username, password, mapping)
 print(commit_list_preprod)
 
 def main_prod(repolist, username, password, mapping):
@@ -241,7 +241,7 @@ def main_prod(repolist, username, password, mapping):
     print("---------------------")
   return commit_list
 
-commit_list_prod = main_prod(username, password, mapping)
+commit_list_prod = main_prod(repolist, username, password, mapping)
 print(commit_list_prod)
 
 time_ist = pd.Timestamp.now('Asia/Kolkata')
