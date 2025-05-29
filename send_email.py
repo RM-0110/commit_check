@@ -9,9 +9,7 @@ from email.mime.multipart import MIMEMultipart
 
 username = "riddhimann" # add your jenkins username
 password = os.getenv('JENKINS_PASSWORD')
-print(password)
-
-repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst"]
+repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst", "DDL", "DML"]
 
 def get_branch(repo, url, jsonurl, username, password, branch_name = None):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
@@ -137,7 +135,7 @@ mapping = {
   "UI": {
     "job_name_dev": "vyas/job/ui/job/deploy-dev",
     "job_name_preprod": "vyas/job/ui/job/deploy-preprod",
-    "job_name_prod": "vyas/job/ui/job/deploy-pri-prod"
+    "job_name_prod": "vyas/job/core/job/deploy-pri-prod"
   },
   "user_management": {
     "job_name_dev": "user-management/job/deploy-dev",
@@ -183,17 +181,26 @@ mapping = {
     "job_name_dev": "utilities/job/sendemail/job/deploy-dev",
     "job_name_preprod": "utilities/job/sendemail/job/deploy-preprod",
     "job_name_prod": "utilities/job/sendemail/job/deploy-pri-prod"
-},
+  },
   "analyst": {
     "job_name_dev": "vyas/job/analyst/job/deploy-dev",
     "job_name_preprod": "vyas/job/analyst/job/deploy-preprod",
     "job_name_prod": "vyas/job/analyst/job/deploy-pri-prod"
-}
+  },
+  "DDL": {
+    "job_name_dev": "database/job/rds/job/tmh/job/ddl/job/deploy-dev",
+    "job_name_preprod": "database/job/rds/job/tmh/job/ddl/job/deploy-preprod",
+    "job_name_prod": "database/job/rds/job/tmh/job/ddl/job/deploy-prod"
+  },
+  "DML": {
+    "job_name_dev": "database/job/rds/job/tmh/job/dml/job/deploy-dev",
+    "job_name_preprod": "database/job/rds/job/tmh/job/dml/job/deploy-preprod",
+    "job_name_prod": "database/job/rds/job/tmh/job/dml/job/deploy-prod"
+  }
 }
 
-def main_preprod(repolist, username, password, mapping):
+def main_preprod(username, password, mapping, repolist):
   commit_list = []
-  # repolist = ["user management", "cancerbaba", "nes", "refresh articles", "core", "UI", "patient reports", "www", "ui-user-management", "napi", "process", "experts", "sendmail", "analyst"]
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_preprod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
@@ -214,13 +221,11 @@ def main_preprod(repolist, username, password, mapping):
     print("---------------------")
   return commit_list
 
-commit_list_preprod = main_preprod(repolist, username, password, mapping)
+commit_list_preprod = main_preprod(username, password, mapping, repolist)
 print(commit_list_preprod)
 
-def main_prod(repolist, username, password, mapping):
+def main_prod(username, password, mapping, repolist):
   commit_list = []
-  # repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst"]
-
   for index,repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_prod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
@@ -241,7 +246,7 @@ def main_prod(repolist, username, password, mapping):
     print("---------------------")
   return commit_list
 
-commit_list_prod = main_prod(repolist, username, password, mapping)
+commit_list_prod = main_prod(username, password, mapping, repolist)
 print(commit_list_prod)
 
 time_ist = pd.Timestamp.now('Asia/Kolkata')
@@ -268,7 +273,7 @@ for index, value in enumerate(commit_list_prod):
     email_body += str(index + 1) + ". " + value + "\n"
 
 email_body += "\n\n\n"
-email_body += "Build numbers having 'none' value indicates that the latest deployment does not have any upstream project linked to it."
+email_body += "Build numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 sender_email = "riddhimann@navyatech.in"  # Replace with your email
 receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
