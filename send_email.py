@@ -135,7 +135,7 @@ mapping = {
   "UI": {
     "job_name_dev": "vyas/job/ui/job/deploy-dev",
     "job_name_preprod": "vyas/job/ui/job/deploy-preprod",
-    "job_name_prod": "vyas/job/core/job/deploy-pri-prod"
+    "job_name_prod": "vyas/job/ui/job/deploy-pri-prod"
   },
   "user_management": {
     "job_name_dev": "user-management/job/deploy-dev",
