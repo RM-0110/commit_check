@@ -273,62 +273,64 @@ commit_list_prod, prod_mismatches = main_prod(username, password, mapping, repol
 time_ist = pd.Timestamp.now('Asia/Kolkata')
 formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
 
+# Detect which environments have mismatches
 alert_triggered = False
-alert_env = ""
+alert_envs = []
 alert_body = ""
 
 if preprod_mismatches:
     alert_triggered = True
-    alert_env = "preprod"
-    alert_body = "Branch Mismatch Detected in Preprod Environment\n\n"
+    alert_envs.append("PREPROD")
+    alert_body += "Branch Mismatch Detected in Preprod Environment\n\n"
     for repo, (expected, actual) in preprod_mismatches.items():
         alert_body += f"{repo}: Expected = {expected}, Found = {actual}\n"
+    alert_body += "\n"
 
-elif prod_mismatches:
+if prod_mismatches:
     alert_triggered = True
-    alert_env = "prod"
-    alert_body = "Branch Mismatch Detected in Prod Environment\n\n"
+    alert_envs.append("PROD")
+    alert_body += "Branch Mismatch Detected in Prod Environment\n\n"
     for repo, (expected, actual) in prod_mismatches.items():
         alert_body += f"{repo}: Expected = {expected}, Found = {actual}\n"
+    alert_body += "\n"
 
-print("List of preprod branches and commit IDs"+"\n")
-for index, value in enumerate(commit_list_preprod):
-  print(str(index+1)+". "+value)
-
-print("List of prod branches and commit IDs"+"\n")
-for index, value in enumerate(commit_list_prod):
-  print(str(index+1)+". "+value)
-
-#-----------------------------------------------
-
-# Prepare email subject and content
+# Build subject and content
 if alert_triggered:
-    subject = f"ALERT: Branch Mismatch for {alert_env.upper()} - {formatted_time}"
+    env_label = " and ".join(alert_envs)
+    subject = f"ALERT: Branch Mismatch for {env_label} - {formatted_time}"
     email_content = alert_body
 else:
     subject = f"Daily Commit List - Preprod and Prod - {formatted_time}"
-    email_content = "List of preprod branches and commit IDs\n\n"
-    for index, value in enumerate(commit_list_preprod):
-        email_content += f"{index + 1}. {value}\n"
-    email_content += "\n------------------------------\n"
-    email_content += "\nList of prod branches and commit IDs\n\n"
-    for index, value in enumerate(commit_list_prod):
-        email_content += f"{index + 1}. {value}\n"
-    email_content += "\n\nBuild numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
+    email_content = ""
+
+# Append commit list regardless of alert
+email_content += "------------------------------\n"
+email_content += "Full Commit List (Preprod and Prod)\n"
+email_content += "------------------------------\n\n"
+
+email_content += "List of preprod branches and commit IDs\n\n"
+for index, value in enumerate(commit_list_preprod):
+    email_content += f"{index + 1}. {value}\n"
+
+email_content += "\n------------------------------\n"
+email_content += "\nList of prod branches and commit IDs\n\n"
+for index, value in enumerate(commit_list_prod):
+    email_content += f"{index + 1}. {value}\n"
+
+email_content += "\n\nBuild numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 # Email configuration
 sender_email = "riddhimann@navyatech.in"
 receiver_emails = ["riddhimann@navyatech.in"]
 email_password = os.getenv('APP_PASSWORD')
 
-# Create email
+# Create and send email
 message = MIMEMultipart()
 message["From"] = sender_email
 message["To"] = ", ".join(receiver_emails)
 message["Subject"] = subject
 message.attach(MIMEText(email_content, "plain"))
 
-# Send email
 try:
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
