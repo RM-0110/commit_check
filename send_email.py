@@ -11,6 +11,12 @@ username = "riddhimann" # add your jenkins username
 password = os.getenv('JENKINS_PASSWORD')
 repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst", "DDL", "DML"]
 
+preprod_current_branches = {}
+prod_current_branches = {}
+
+expected_branches_preprod = {"user_management": "master", "cancerbaba": "moffitt_cerner", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master", "DDL": "develop", "DML": "develop"}
+expected_branches_prod = {"user_management": "master", "cancerbaba": "develop", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master", "DDL": "develop", "DML": "develop"}
+
 def get_branch(repo, url, jsonurl, username, password, branch_name = None):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
   if response.status_code == 200:
@@ -201,17 +207,23 @@ mapping = {
 
 def main_preprod(username, password, mapping, repolist):
   commit_list = []
-  for index,repo in enumerate(repolist):
+  mismatches = {}
+  for index, repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_preprod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
     jsonurl = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/api/json"
     url_last_succesful_build = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild"
+
     print("Checking for: "+repo)
     branch = get_branch(repo, url, jsonurl, username, password)
-    if branch == None:
+    if branch is None:
       branch = "develop"
-    else:
-      branch = branch
+    
+    preprod_current_branches[repo] = branch
+    expected_branch = expected_branches_preprod.get(repo)
+    if expected_branch and expected_branch != branch:
+        mismatches[repo] = (expected_branch, branch)
+
     user = get_user(url, username, password)
     time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
@@ -219,24 +231,32 @@ def main_preprod(username, password, mapping, repolist):
     commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build number: {build_number}, {time}"
     commit_list.append(commit_string)
     print("---------------------")
-  return commit_list
+  return commit_list, mismatches
 
-commit_list_preprod = main_preprod(username, password, mapping, repolist)
-print(commit_list_preprod)
+
+commit_list_preprod, preprod_mismatches = main_preprod(username, password, mapping, repolist)
+
+# print(commit_list_preprod)
 
 def main_prod(username, password, mapping, repolist):
   commit_list = []
-  for index,repo in enumerate(repolist):
+  mismatches = {}
+  for index, repo in enumerate(repolist):
     repo_job = mapping[repo]["job_name_prod"]
     url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/consoleText"
     jsonurl = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild/api/json"
     url_last_succesful_build = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild"
+
     print("Checking for: "+repo)
     branch = get_branch(repo, url, jsonurl, username, password)
-    if branch == None:
+    if branch is None:
       branch = "develop"
-    else:
-      branch = branch
+    
+    prod_current_branches[repo] = branch
+    expected_branch = expected_branches_prod.get(repo)
+    if expected_branch and expected_branch != branch:
+        mismatches[repo] = (expected_branch, branch)
+
     user = get_user(url, username, password)
     time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
@@ -244,13 +264,33 @@ def main_prod(username, password, mapping, repolist):
     commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build number: {build_number}, {time}"
     commit_list.append(commit_string)
     print("---------------------")
-  return commit_list
+  return commit_list, mismatches
 
-commit_list_prod = main_prod(username, password, mapping, repolist)
-print(commit_list_prod)
+
+commit_list_prod, prod_mismatches = main_prod(username, password, mapping, repolist)
+# print(commit_list_prod)
 
 time_ist = pd.Timestamp.now('Asia/Kolkata')
 formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
+
+alert_triggered = False
+alert_env = ""
+alert_body = ""
+
+if preprod_mismatches:
+    alert_triggered = True
+    alert_env = "preprod"
+    alert_body = "Branch Mismatch Detected in Preprod Environment\n\n"
+    for repo, (expected, actual) in preprod_mismatches.items():
+        alert_body += f"{repo}: Expected = {expected}, Found = {actual}\n"
+
+elif prod_mismatches:
+    alert_triggered = True
+    alert_env = "prod"
+    alert_body = "Branch Mismatch Detected in Prod Environment\n\n"
+    for repo, (expected, actual) in prod_mismatches.items():
+        alert_body += f"{repo}: Expected = {expected}, Found = {actual}\n"
+
 print("List of preprod branches and commit IDs"+"\n")
 for index, value in enumerate(commit_list_preprod):
   print(str(index+1)+". "+value)
@@ -261,40 +301,40 @@ for index, value in enumerate(commit_list_prod):
 
 #-----------------------------------------------
 
-email_body = "List of preprod branches and commit IDs"+"\n\n"
-for index, value in enumerate(commit_list_preprod):
-    email_body += str(index + 1) + ". " + value + "\n"
+# Prepare email subject and content
+if alert_triggered:
+    subject = f"ALERT: Branch Mismatch for {alert_env.upper()} - {formatted_time}"
+    email_content = alert_body
+else:
+    subject = f"Daily Commit List - Preprod and Prod - {formatted_time}"
+    email_content = "List of preprod branches and commit IDs\n\n"
+    for index, value in enumerate(commit_list_preprod):
+        email_content += f"{index + 1}. {value}\n"
+    email_content += "\n------------------------------\n"
+    email_content += "\nList of prod branches and commit IDs\n\n"
+    for index, value in enumerate(commit_list_prod):
+        email_content += f"{index + 1}. {value}\n"
+    email_content += "\n\nBuild numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
-email_body += "------------------------------"+"\n"
-email_body += "------------------------------"+"\n"
-
-email_body += "\nList of prod branches and commit IDs"+"\n\n"
-for index, value in enumerate(commit_list_prod):
-    email_body += str(index + 1) + ". " + value + "\n"
-
-email_body += "\n\n\n"
-email_body += "Build numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
-
-sender_email = "riddhimann@navyatech.in"  # Replace with your email
-receiver_emails = ["riddhimann@navyatech.in", "kirana@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]  # Replace with your email
-password = os.getenv('APP_PASSWORD')
-
-subject = "Daily Commit List - Preprod and Prod - " + str(formatted_time)
+# Email configuration
+sender_email = "riddhimann@navyatech.in"
+receiver_emails = ["riddhimann@navyatech.in"]
+email_password = os.getenv('APP_PASSWORD')
 
 # Create email
 message = MIMEMultipart()
 message["From"] = sender_email
 message["To"] = ", ".join(receiver_emails)
 message["Subject"] = subject
-message.attach(MIMEText(email_body, "plain"))
+message.attach(MIMEText(email_content, "plain"))
 
 # Send email
 try:
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
-    server.login(sender_email, password)
+    server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_emails, message.as_string())
     server.quit()
     print("Email sent successfully.")
 except Exception as e:
-    print("Error:", str(e))
+    print(f"[ERROR] Failed to send email: {e}")
