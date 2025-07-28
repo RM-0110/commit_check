@@ -14,7 +14,7 @@ repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", 
 preprod_current_branches = {}
 prod_current_branches = {}
 
-expected_branches_preprod = {"user_management": "master", "cancerbaba": "moffitt_cerner", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master", "DDL": "develop", "DML": "develop"}
+expected_branches_preprod = {"user_management": "master", "cancerbaba": "develop", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master", "DDL": "develop", "DML": "develop"}
 expected_branches_prod = {"user_management": "master", "cancerbaba": "develop", "nes": "develop", "refresh_articles": "develop", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master", "DDL": "develop", "DML": "develop"}
 
 def get_branch(repo, url, jsonurl, username, password, branch_name = None):
