@@ -211,7 +211,7 @@ mapping = {
   "NES_DDL": {
     "job_name_dev": "database/job/rds/job/nes/job/ddl/job/deploy-dev",
     "job_name_preprod": "database/job/rds/job/nes/job/ddl/job/deploy-preprod",
-    "job_name_prod": "database/job/rds/job/nes/job/ddl/job/deploy-pri-prod"
+    "job_name_prod": "database/job/rds/job/nes/job/ddl/job/deploy-prod"
   }
 }
 
