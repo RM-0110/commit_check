@@ -14,8 +14,8 @@ repolist = ["user_management", "cancerbaba", "nes", "refresh_articles", "core", 
 preprod_current_branches = {}
 prod_current_branches = {}
 
-expected_branches_preprod = {"user_management": "master", "cancerbaba": "develop", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master", "DDL": "develop", "DML": "develop"}
-expected_branches_prod = {"user_management": "master", "cancerbaba": "develop", "nes": "develop", "refresh_articles": "develop", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master", "DDL": "develop", "DML": "develop"}
+expected_branches_preprod = {"user_management": "master", "cancerbaba": "develop", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master"}
+expected_branches_prod = {"user_management": "master", "cancerbaba": "develop", "nes": "develop", "refresh_articles": "develop", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master"}
 
 def get_branch(repo, url, jsonurl, username, password, branch_name = None):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
@@ -331,7 +331,7 @@ email_content += "\n\nBuild numbers having 'None' value indicates that the lates
 
 # Email configuration
 sender_email = "riddhimann@navyatech.in"
-receiver_emails = ["riddhimann@navyatech.in"]
+receiver_emails = ["riddhimann@navyatech.in", "pushpa@navyatech.in", "kirana@navyatech.in", "armugam@navyatech.in"]
 email_password = os.getenv('APP_PASSWORD')
 
 # Create and send email
