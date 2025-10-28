@@ -255,7 +255,7 @@ formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
 
 print(formatted_time)
 
-email_content = "List of dev branches and commit IDs\n\n"
+email_content = f"List of dev branches and commit IDs, generated on {formatted_time}."
 for index, value in enumerate(commit_list_dev):
     email_content += f"{index + 1}. {value}\n"
 
