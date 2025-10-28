@@ -261,6 +261,8 @@ for index, value in enumerate(commit_list_dev):
 
 print(email_content)
 
+subject = f"Commit List - Dev- {formatted_time}"
+
 # Email configuration
 sender_email = "riddhimann@navyatech.in"
 receiver_emails = ["riddhimann@navyatech.in"]
