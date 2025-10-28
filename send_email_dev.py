@@ -238,7 +238,7 @@ def main_dev(username, password, mapping, repolist):
     time = get_time(repo, url_last_succesful_build, username, password)
     commitid = get_commit(repo, url, username, password)
     build_number = get_build_number(repo, url, username, password)
-    commit_string = f"{repo}: {branch}, Commit ID: {commitid}, build number: {build_number}, {time}"
+    commit_string = f"{repo}: {branch}, Commit ID: {commitid}, {time}"
     commit_list.append(commit_string)
     print("---------------------")
   return commit_list
