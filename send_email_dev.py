@@ -252,15 +252,12 @@ time_ist = pd.Timestamp.now('Asia/Kolkata')
 formatted_time = time_ist.strftime("%d/%m/%Y %H:%M")
 
 # Append commit list regardless of alert
-email_content += "------------------------------\n"
-email_content += "Full Commit List (Preprod and Prod)\n"
+email_content = "Full Commit List (Dev)\n"
 email_content += "------------------------------\n\n"
 
 email_content += "List of dev branches and commit IDs\n\n"
 for index, value in enumerate(commit_list_dev):
     email_content += f"{index + 1}. {value}\n"
-
-email_content += "\n\nBuild numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 # Email configuration
 sender_email = "riddhimann@navyatech.in"
