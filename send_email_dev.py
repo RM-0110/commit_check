@@ -246,7 +246,7 @@ def main_dev(username, password, mapping, repolist):
 
 commit_list_dev = main_dev(username, password, mapping, repolist)
 
-print(commit_list_dev)
+# print(commit_list_dev)
 
 print("entering email sender")
 
@@ -258,6 +258,8 @@ print(formatted_time)
 email_content = "List of dev branches and commit IDs\n\n"
 for index, value in enumerate(commit_list_dev):
     email_content += f"{index + 1}. {value}\n"
+
+print(email_content)
 
 # Email configuration
 sender_email = "riddhimann@navyatech.in"
