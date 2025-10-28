@@ -265,7 +265,7 @@ subject = f"Commit List - Dev- {formatted_time}"
 
 # Email configuration
 sender_email = "riddhimann@navyatech.in"
-receiver_emails = ["riddhimann@navyatech.in"]
+receiver_emails = ["riddhimann@navyatech.in", "armugam@navyatech.in", "pushpa@navyatech.in", "kirana@navyatech.in"]
 email_password = os.getenv('APP_PASSWORD')
 
 # Create and send email
