@@ -1,4 +1,4 @@
-name: Send Email
+name: Send Email Dev
 
 on:
   workflow_dispatch:  # Allow manual triggering
