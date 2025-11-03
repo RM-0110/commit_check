@@ -155,13 +155,28 @@ def get_build_number(repo, url, username, password):
     response = requests.get(url, auth=HTTPBasicAuth(username, password))
     if response.status_code == 200:
         page_text = response.text
+
+        # First try: old pattern (console text style)
         match = re.search(r'Started by upstream project ".*?/deploy-dev" build number (\d+)', page_text)
         if match:
             build_number = match.group(1)
             print(f"{repo} build number: {build_number}")
             return build_number
-        else:
-            print("No build number found for", repo)
+
+        # Fallback: check HTML source for "deploy-dev #4711" pattern
+        url = f"https://ci.navyanetwork.com/job/{repo_job}/lastSuccessfulBuild"
+        response = requests.get(url, auth=HTTPBasicAuth(username, password))
+        if response.status_code == 200:
+            page_text = response.text
+        match = re.search(r'deploy-dev\s+#(\d+)', page_text)
+        if match:
+            build_number = match.group(1)
+            print(f"{repo} build number (from page source): {build_number}")
+            return build_number
+
+        print(f"No build number found for {repo}")
+    else:
+        print(f"Failed to fetch {repo}: {response.status_code}")
 
 
 # -------------------------------------------------------------------------
@@ -207,7 +222,7 @@ def main_dev(username, password, mapping, repolist):
         commitid = get_commit(repo, url, username, password)
         build_number = get_build_number(repo, url, username, password)
 
-        commit_string = f"{repo}: {branch}, Commit ID: {commitid}, {time_}"
+        commit_string = f"{repo}: {branch}, Commit ID: {commitid}, Build number: {build_number}, {time_}"
         commit_list.append(commit_string)
         print("---------------------")
     return commit_list
@@ -228,12 +243,13 @@ def send_email(commit_list_dev):
 
     subject = f"Commit List - Dev - {formatted_time}"
     sender_email = "riddhimann@navyatech.in"
-    receiver_emails = [
-        "riddhimann@navyatech.in",
-        "armugam@navyatech.in",
-        "pushpa@navyatech.in",
-        "kirana@navyatech.in",
-    ]
+    # receiver_emails = [
+    #     "riddhimann@navyatech.in",
+    #     "armugam@navyatech.in",
+    #     "pushpa@navyatech.in",
+    #     "kirana@navyatech.in",
+    # ]
+    receiver_emails = ["riddhimann@navyatech.in"]
     email_password = os.getenv("APP_PASSWORD")
 
     message = MIMEMultipart()
