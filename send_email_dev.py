@@ -151,7 +151,7 @@ def get_commit(repo, url, username, password):
         return None
 
 
-def get_build_number(repo, url, username, password):
+def get_build_number(repo, url, repo_job, username, password):
     response = requests.get(url, auth=HTTPBasicAuth(username, password))
     if response.status_code == 200:
         page_text = response.text
@@ -220,7 +220,7 @@ def main_dev(username, password, mapping, repolist):
         user = get_user(url, username, password)
         time_ = get_time(repo, url_last_succesful_build, username, password)
         commitid = get_commit(repo, url, username, password)
-        build_number = get_build_number(repo, url, username, password)
+        build_number = get_build_number(repo, url, repo_job, username, password)
 
         commit_string = f"{repo}: {branch}, Commit ID: {commitid}, Build number: {build_number}, {time_}"
         commit_list.append(commit_string)
