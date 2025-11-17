@@ -168,7 +168,7 @@ def get_build_number(repo, url, repo_job, username, password):
         response = requests.get(url, auth=HTTPBasicAuth(username, password))
         if response.status_code == 200:
             page_text = response.text
-        match = re.search(r'deploy-dev\s+#(\d+)', page_text)
+        match = re.search(r'deploy-dev.*?\s+#(\d+)', page_text)
         if match:
             build_number = match.group(1)
             print(f"{repo} build number (from page source): {build_number}")
