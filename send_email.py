@@ -113,7 +113,7 @@ def get_build_number(repo, url, username, password):
   response = requests.get(url, auth=HTTPBasicAuth(username, password))
   if response.status_code == 200:
     page_text = response.text
-    pattern = r'Started by upstream project ".*?/deploy-dev" build number (\d+)'
+    pattern = r'Started by upstream project ".*?/deploy-dev.*?" build number (\d+)'
     match = re.search(pattern, page_text)
     if match:
       build_number = match.group(1)
