@@ -183,7 +183,7 @@ def get_build_number(repo, url, repo_job, username, password):
 # 🔁 Jenkins Job Mapping
 # -------------------------------------------------------------------------
 mapping = {
-    "cancerbaba": {"job_name_dev": "cancerbaba/job/2.0/job/deploy-dev-fargate"},
+    "cancerbaba-fargate": {"job_name_dev": "cancerbaba/job/2.0/job/deploy-dev-fargate"},
     "experts": {"job_name_dev": "experts/job/docker/job/deploy-dev"},
     "core": {"job_name_dev": "vyas/job/core/job/deploy-dev"},
     "UI": {"job_name_dev": "vyas/job/ui/job/deploy-dev"},
