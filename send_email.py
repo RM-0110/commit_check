@@ -123,10 +123,10 @@ def get_build_number(repo, url, username, password):
       print("no match")
 
 mapping = {
-  "cancerbaba": {
-    "job_name_dev": "cancerbaba/job/2.0/job/deploy-dev",
-    "job_name_preprod": "cancerbaba/job/2.0/job/deploy-preprod",
-    "job_name_prod": "cancerbaba/job/2.0/job/deploy-pri-prod"
+  "cancerbaba-fargate": {
+    "job_name_dev": "cancerbaba/job/2.0/job/deploy-dev-fargate",
+    "job_name_preprod": "cancerbaba/job/2.0/job/deploy-preprod-fargate",
+    "job_name_prod": "cancerbaba/job/2.0/job/deploy-pri-prod-fargate"
   },
   "experts": {
     "job_name_dev": "experts/job/docker/job/deploy-dev",
@@ -331,7 +331,8 @@ email_content += "\n\nBuild numbers having 'None' value indicates that the lates
 
 # Email configuration
 sender_email = "riddhimann@navyatech.in"
-receiver_emails = ["riddhimann@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]
+# receiver_emails = ["riddhimann@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]
+receiver_emails = ["riddhimann@navyatech.in"]
 email_password = os.getenv('APP_PASSWORD')
 
 # Create and send email
