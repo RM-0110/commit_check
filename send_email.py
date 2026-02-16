@@ -9,13 +9,13 @@ from email.mime.multipart import MIMEMultipart
 
 username = "riddhimann" # add your jenkins username
 password = os.getenv('JENKINS_PASSWORD')
-repolist = ["user_management", "cancerbaba-fargate", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts", "sendmail", "analyst", "DDL", "DML", "utilities_cancerbaba", "NES_DDL"]
+repolist = ["user_management", "cancerbaba-fargate", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts-fargate", "sendmail", "analyst", "DDL", "DML", "utilities_cancerbaba", "NES_DDL"]
 
 preprod_current_branches = {}
 prod_current_branches = {}
 
-expected_branches_preprod = {"user_management": "master", "cancerbaba-fargate": "develop", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master"}
-expected_branches_prod = {"user_management": "master", "cancerbaba-fargate": "develop", "nes": "develop", "refresh_articles": "develop", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts": "develop", "sendmail": "master", "analyst": "master"}
+expected_branches_preprod = {"user_management": "master", "cancerbaba-fargate": "develop", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts-fargate": "develop", "sendmail": "master", "analyst": "master"}
+expected_branches_prod = {"user_management": "master", "cancerbaba-fargate": "develop", "nes": "develop", "refresh_articles": "develop", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts-fargate": "develop", "sendmail": "master", "analyst": "master"}
 
 def get_branch(repo, url, jsonurl, username, password, branch_name = None):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
@@ -128,10 +128,10 @@ mapping = {
     "job_name_preprod": "cancerbaba/job/2.0/job/deploy-preprod-fargate",
     "job_name_prod": "cancerbaba/job/2.0/job/deploy-pri-prod-fargate"
   },
-  "experts": {
-    "job_name_dev": "experts/job/docker/job/deploy-dev",
-    "job_name_preprod": "experts/job/docker/job/deploy-preprod",
-    "job_name_prod": "experts/job/docker/job/deploy-pri-prod"
+  "experts-fargate": {
+    "job_name_dev": "experts/job/docker/job/deploy-dev-fargate",
+    "job_name_preprod": "experts/job/docker/job/deploy-preprod-fargate",
+    "job_name_prod": "experts/job/docker/job/deploy-pri-prod-fargate"
   },
   "core": {
     "job_name_dev": "vyas/job/core/job/deploy-dev",
@@ -331,8 +331,8 @@ email_content += "\n\nBuild numbers having 'None' value indicates that the lates
 
 # Email configuration
 sender_email = "riddhimann@navyatech.in"
-receiver_emails = ["riddhimann@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]
-# receiver_emails = ["riddhimann@navyatech.in"]
+# receiver_emails = ["riddhimann@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]
+receiver_emails = ["riddhimann@navyatech.in"]
 email_password = os.getenv('APP_PASSWORD')
 
 # Create and send email
