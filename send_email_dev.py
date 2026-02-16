@@ -13,7 +13,7 @@ username = "riddhimann"  # Jenkins username
 password = os.getenv("JENKINS_PASSWORD")
 repolist = [
     "user_management", "cancerbaba-fargate", "nes", "refresh_articles", "core", "UI",
-    "patient_reports", "www", "ui_user_management", "napi", "process", "experts",
+    "patient_reports", "www", "ui_user_management", "napi", "process", "experts-fargate",
     "sendmail", "analyst", "DDL", "DML", "utilities_cancerbaba", "NES_DDL"
 ]
 
@@ -184,7 +184,7 @@ def get_build_number(repo, url, repo_job, username, password):
 # -------------------------------------------------------------------------
 mapping = {
     "cancerbaba-fargate": {"job_name_dev": "cancerbaba/job/2.0/job/deploy-dev-fargate"},
-    "experts": {"job_name_dev": "experts/job/docker/job/deploy-dev"},
+    "experts-fargate": {"job_name_dev": "experts/job/docker/job/deploy-dev-fargate"},
     "core": {"job_name_dev": "vyas/job/core/job/deploy-dev"},
     "UI": {"job_name_dev": "vyas/job/ui/job/deploy-dev"},
     "user_management": {"job_name_dev": "user-management/job/deploy-dev"},
@@ -243,13 +243,13 @@ def send_email(commit_list_dev):
 
     subject = f"Commit List - Dev - {formatted_time}"
     sender_email = "riddhimann@navyatech.in"
-    receiver_emails = [
-        "riddhimann@navyatech.in",
-        "armugam@navyatech.in",
-        "pushpa@navyatech.in",
-        "kirana@navyatech.in",
-    ]
-    # receiver_emails = ["riddhimann@navyatech.in"]
+    # receiver_emails = [
+    #     "riddhimann@navyatech.in",
+    #     "armugam@navyatech.in",
+    #     "pushpa@navyatech.in",
+    #     "kirana@navyatech.in",
+    # ]
+    receiver_emails = ["riddhimann@navyatech.in"]
     email_password = os.getenv("APP_PASSWORD")
 
     message = MIMEMultipart()
