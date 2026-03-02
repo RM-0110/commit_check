@@ -9,13 +9,13 @@ from email.mime.multipart import MIMEMultipart
 
 username = "riddhimann" # add your jenkins username
 password = os.getenv('JENKINS_PASSWORD')
-repolist = ["user_management", "cancerbaba-fargate", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts-fargate", "sendmail", "analyst", "DDL", "DML", "utilities_cancerbaba", "NES_DDL"]
+repolist = ["user_management-fargate", "cancerbaba-fargate", "nes", "refresh_articles", "core", "UI", "patient_reports", "www", "ui_user_management", "napi", "process", "experts-fargate", "sendmail", "analyst", "DDL", "DML", "utilities_cancerbaba", "NES_DDL"]
 
 preprod_current_branches = {}
 prod_current_branches = {}
 
-expected_branches_preprod = {"user_management": "master", "cancerbaba-fargate": "develop", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts-fargate": "develop", "sendmail": "master", "analyst": "master"}
-expected_branches_prod = {"user_management": "master", "cancerbaba-fargate": "develop", "nes": "develop", "refresh_articles": "develop", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts-fargate": "develop", "sendmail": "master", "analyst": "master"}
+expected_branches_preprod = {"user_management-fargate": "master", "cancerbaba-fargate": "develop", "nes": "develop", "refresh_articles": "master", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts-fargate": "develop", "sendmail": "master", "analyst": "master"}
+expected_branches_prod = {"user_management-fargate": "master", "cancerbaba-fargate": "develop", "nes": "develop", "refresh_articles": "develop", "core": "master", "UI": "master", "patient_reports": "master", "www": "develop", "ui_user_management": "master", "napi": "develop", "process": "develop", "experts-fargate": "develop", "sendmail": "master", "analyst": "master"}
 
 def get_branch(repo, url, jsonurl, username, password, branch_name = None):
   response = requests.get(jsonurl, auth=HTTPBasicAuth(username, password))
@@ -143,10 +143,10 @@ mapping = {
     "job_name_preprod": "vyas/job/ui/job/deploy-preprod",
     "job_name_prod": "vyas/job/ui/job/deploy-pri-prod"
   },
-  "user_management": {
-    "job_name_dev": "user-management/job/deploy-dev",
-    "job_name_preprod": "user-management/job/deploy-preprod",
-    "job_name_prod": "user-management/job/deploy-pri-prod"
+  "user_management-fargate": {
+    "job_name_dev": "user-management/job/deploy-dev-fargate",
+    "job_name_preprod": "user-management/job/deploy-preprod-fargate",
+    "job_name_prod": "user-management/job/deploy-pri-prod-fargate"
   },
   "patient_reports": {
     "job_name_dev": "vyas/job/patient-reports/job/deploy-dev",
