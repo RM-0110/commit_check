@@ -12,7 +12,7 @@ from email.mime.multipart import MIMEMultipart
 username = "riddhimann"  # Jenkins username
 password = os.getenv("JENKINS_PASSWORD")
 repolist = [
-    "user_management", "cancerbaba-fargate", "nes", "refresh_articles", "core", "UI",
+    "user_management-fargate", "cancerbaba-fargate", "nes", "refresh_articles", "core", "UI",
     "patient_reports", "www", "ui_user_management", "napi", "process", "experts-fargate",
     "sendmail", "analyst", "DDL", "DML", "utilities_cancerbaba", "NES_DDL"
 ]
@@ -187,7 +187,7 @@ mapping = {
     "experts-fargate": {"job_name_dev": "experts/job/docker/job/deploy-dev-fargate"},
     "core": {"job_name_dev": "vyas/job/core/job/deploy-dev"},
     "UI": {"job_name_dev": "vyas/job/ui/job/deploy-dev"},
-    "user_management": {"job_name_dev": "user-management/job/deploy-dev"},
+    "user_management-fargate": {"job_name_dev": "user-management/job/deploy-dev-fargate"},
     "patient_reports": {"job_name_dev": "vyas/job/patient-reports/job/deploy-dev"},
     "refresh_articles": {"job_name_dev": "vyas/job/refresh-articles/job/deploy-dev"},
     "process": {"job_name_dev": "process/job/docker/job/deploy-dev"},
