@@ -330,9 +330,9 @@ for index, value in enumerate(commit_list_prod):
 email_content += "\n\nBuild numbers having 'None' value indicates that the latest preprod deployment does not have any upstream project linked to it."
 
 # Email configuration
-sender_email = "riddhimann@navyatech.in"
-receiver_emails = ["riddhimann@navyatech.in", "pushpa@navyatech.in", "armugam@navyatech.in"]
-# receiver_emails = ["riddhimann@navyatech.in"]
+sender_email = "riddhimann@navya.care"
+# receiver_emails = ["riddhimann@navya.care", "pushpa@navya.care", "armugam@navya.care"]
+receiver_emails = ["riddhimann@navya.care"]
 email_password = os.getenv('APP_PASSWORD')
 
 # Create and send email
