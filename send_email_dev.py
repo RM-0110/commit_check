@@ -242,12 +242,12 @@ def send_email(commit_list_dev):
     print(email_content)
 
     subject = f"Commit List - Dev - {formatted_time}"
-    sender_email = "riddhimann@navyatech.in"
+    sender_email = "riddhimann@navya.care"
     receiver_emails = [
-        "riddhimann@navyatech.in",
-        "armugam@navyatech.in",
-        "pushpa@navyatech.in",
-        "kirana@navyatech.in",
+        "riddhimann@navya.care",
+        "armugam@navya.care",
+        "pushpa@navya.care",
+        "kirana@navya.care",
     ]
     # receiver_emails = ["riddhimann@navyatech.in"]
     email_password = os.getenv("APP_PASSWORD")
