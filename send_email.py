@@ -331,8 +331,8 @@ email_content += "\n\nBuild numbers having 'None' value indicates that the lates
 
 # Email configuration
 sender_email = "riddhimann@navya.care"
-# receiver_emails = ["riddhimann@navya.care", "pushpa@navya.care", "armugam@navya.care"]
-receiver_emails = ["riddhimann@navya.care"]
+receiver_emails = ["riddhimann@navya.care", "pushpa@navya.care", "armugam@navya.care"]
+# receiver_emails = ["riddhimann@navya.care"]
 email_password = os.getenv('APP_PASSWORD')
 
 # Create and send email
